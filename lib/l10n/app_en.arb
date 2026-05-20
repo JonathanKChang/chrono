@@ -301,6 +301,8 @@
   "@startMelodyAtRandomPosDescription": {},
   "vibrationSetting": "Vibration",
   "@vibrationSetting": {},
+  "timerDeleteAfterFinishingSetting": "Delete After Finishing",
+  "@timerDeleteAfterFinishingSetting": {},
   "audioChannelSetting": "Audio Channel",
   "@audioChannelSetting": {},
   "audioChannelAlarm": "Alarm",

@@ -52,6 +52,8 @@ class ClockTimer extends CustomizableListItem {
           ? _settings.getSetting("Time To Full Volume").value
           : TimeDuration.zero;
   double get addLength => _settings.getSetting("Add Length").value;
+  bool get shouldDeleteAfterFinishing =>
+      _settings.getSetting("Delete After Finishing").value;
   List<Tag> get tags => _settings.getSetting("Tags").value;
   TimeDuration get duration => _duration;
   TimeDuration get currentDuration => _currentDuration;
