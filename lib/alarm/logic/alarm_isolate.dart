@@ -249,6 +249,15 @@ void stopTimer(int scheduleId, AlarmStopAction action) async {
         RingtonePlayer.playAlarm(alarm);
       }
     }
+    // One-shot timer: delete from storage on dismiss
+    if (timer.shouldDeleteAfterFinishing) {
+      List<ClockTimer> timers = await loadList("timers");
+      timers.removeWhere((t) => t.id == scheduleId);
+      await saveList("timers", timers);
+      // Notify UI isolate that timers list changed
+      SendPort? updatePort = IsolateNameServer.lookupPortByName(updatePortName);
+      updatePort?.send("updateTimers");
+    }
   }
   RingingManager.stopAllTimers();
 }
