@@ -8,6 +8,7 @@ import 'package:clock_app/common/utils/list_storage.dart';
 import 'package:clock_app/developer/logic/logger.dart';
 import 'package:clock_app/notifications/logic/alarm_notifications.dart';
 import 'package:clock_app/system/logic/initialize_isolate.dart';
+import 'package:clock_app/timer/types/time_duration.dart';
 import 'package:clock_app/timer/types/timer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:clock_app/alarm/logic/schedule_alarm.dart';
@@ -70,14 +71,18 @@ void stopScheduledNotification(List<dynamic> message) {
   int scheduleId = message[0];
   RingtonePlayer.stop();
   AlarmStopAction action = AlarmStopAction.values.byName(message[2]);
+  // message[3] is optional snoozeSeconds (total seconds, no rounding)
+  int? snoozeSeconds = message.length > 3 && message[3] != null
+      ? (message[3] as num).toInt()
+      : null;
 
   ScheduledNotificationType notificationType =
       ScheduledNotificationType.values.byName(message[1]);
 
   if (notificationType == ScheduledNotificationType.alarm) {
-    stopAlarm(scheduleId, action);
+    stopAlarm(scheduleId, action, snoozeSeconds: snoozeSeconds);
   } else if (notificationType == ScheduledNotificationType.timer) {
-    stopTimer(scheduleId, action);
+    stopTimer(scheduleId, action, snoozeSeconds: snoozeSeconds);
   }
 
   logger.t(
@@ -178,10 +183,18 @@ void setVolume(double volume) {
   RingtonePlayer.setVolume(volume / 100);
 }
 
-void stopAlarm(int scheduleId, AlarmStopAction action) async {
-  logger.i("[stopAlarm] Stopping alarm $scheduleId with action: ${action.name}");
+void stopAlarm(int scheduleId, AlarmStopAction action,
+    {int? snoozeSeconds}) async {
+  logger.i(
+      "[stopAlarm] Stopping alarm $scheduleId with action: ${action.name}, snoozeSeconds=$snoozeSeconds");
   if (action == AlarmStopAction.snooze) {
-    await updateAlarmById(scheduleId, (alarm) async => await alarm.snooze());
+    if (snoozeSeconds != null) {
+      await updateAlarmById(scheduleId,
+          (alarm) async => await alarm.snooze(seconds: snoozeSeconds));
+    } else {
+      await updateAlarmById(scheduleId, (alarm) async =>
+          await alarm.snooze(minutes: alarm.snoozeLength.toInt()));
+    }
     // await createSnoozeNotification(scheduleId);
   } else if (action == AlarmStopAction.dismiss) {
     // If there was a timer ringing when the alarm was triggered, resume it now
@@ -232,13 +245,18 @@ void triggerTimer(int scheduleId, Json params) async {
   );
 }
 
-void stopTimer(int scheduleId, AlarmStopAction action) async {
-  logger.i("Stopping timer $scheduleId with action: ${action.name}");
+void stopTimer(int scheduleId, AlarmStopAction action,
+      {int? snoozeSeconds}) async {
+  logger.i("Stopping timer $scheduleId with action: ${action.name}, snoozeSeconds=$snoozeSeconds");
   ClockTimer? timer = getTimerById(scheduleId);
   if (timer == null) return;
   if (action == AlarmStopAction.snooze) {
     updateTimerById(scheduleId, (timer) async {
-      await timer.snooze();
+      if (snoozeSeconds != null) {
+        await timer.snooze(duration: TimeDuration(seconds: snoozeSeconds));
+      } else {
+        await timer.snooze();
+      }
     });
   } else if (action == AlarmStopAction.dismiss) {
     // If there was an alarm already ringing when the timer was triggered, we
