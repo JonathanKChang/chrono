@@ -252,6 +252,7 @@ SettingGroup alarmSettingsSchema = SettingGroup(
             30,
             5,
             unit: "minutes",
+            snapLength: 1,
             enableConditions: [
               ValueCondition(["Enabled"], (value) => value == true)
             ]),
