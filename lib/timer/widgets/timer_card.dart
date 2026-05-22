@@ -136,6 +136,15 @@ class _TimerCardState extends State<TimerCard> {
                 ],
               ),
             ),
+            if (widget.timer.shouldDeleteAfterFinishing)
+              SizedBox(
+                width: 24,
+                child: Icon(
+                  Icons.delete_outline_rounded,
+                  size: 18,
+                  color: colorScheme.onSurface.withOpacity(0.4),
+                ),
+              ),
             const Spacer(),
             CardEditMenu(actions: [
               if (!widget.timer.isStopped)
