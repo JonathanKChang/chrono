@@ -42,6 +42,7 @@ class Alarm extends CustomizableListItem {
   bool _markedForDeletion = false;
   // bool _isFinished = false;
   DateTime? _snoozeTime;
+  Duration _snoozeDuration = Duration.zero;
   int _snoozeCount = 0;
   DateTime? _skippedTime;
   SettingGroup _settings = SettingGroup(
@@ -142,6 +143,7 @@ class Alarm extends CustomizableListItem {
         _snoozeCount = alarm._snoozeCount,
         _snoozeTime = alarm._snoozeTime,
         _markedForDeletion = alarm._markedForDeletion,
+        _snoozeDuration = alarm._snoozeDuration,
         _skippedTime = alarm._skippedTime,
         _settings = alarm._settings.copy() {
     _schedules = createSchedules(_settings);
@@ -153,6 +155,7 @@ class Alarm extends CustomizableListItem {
     _time = other._time;
     _snoozeCount = other._snoozeCount;
     _snoozeTime = other._snoozeTime;
+    _snoozeDuration = other._snoozeDuration;
     _skippedTime = other._skippedTime;
     _settings = other._settings.copy();
     _schedules = other._schedules;
@@ -215,25 +218,27 @@ class Alarm extends CustomizableListItem {
     }
   }
 
-  Future<void> snooze() async {
+  Future<void> snooze({int? minutes, int? seconds}) async {
+    final selectedDuration = seconds != null
+        ? Duration(seconds: seconds)
+        : Duration(minutes: minutes ?? snoozeLength.floor());
     // The alarm can only be snoozed the number of times specified in the settings
     _snoozeCount++;
     // When the alarm rang, it was disabled, so we need to enable it again if the user presses snooze
     _isEnabled = true;
     // Snoozing should cancel any skip
     _skippedTime = null;
-    _snoozeTime = DateTime.now().add(
-      Duration(minutes: snoozeLength.floor()),
-    );
+    _snoozeTime = DateTime.now().add(selectedDuration);
+    _snoozeDuration = selectedDuration;
     await _scheduleSnooze();
   }
 
   Future<void> _scheduleSnooze() async {
     await scheduleSnoozeAlarm(
       id,
-      Duration(minutes: snoozeLength.floor()),
+      _snoozeDuration,
       ScheduledNotificationType.alarm,
-      "_scheduleSnooze(): Alarm snoozed for $snoozeLength minutes",
+      "_scheduleSnooze(): Alarm snoozed for ${_snoozeDuration.inMinutes} minutes",
     );
   }
 
