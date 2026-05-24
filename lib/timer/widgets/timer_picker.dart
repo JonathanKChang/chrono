@@ -187,11 +187,10 @@ Future<PickerResult<ClockTimer>?> showTimerPicker(
                               // mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (type != DurationPickerType.numpad)
-                                  const SizedBox(height: 16),
-                                if (type != DurationPickerType.numpad) title(),
                                 const SizedBox(height: 16),
-                                label(),
+                                title(),
+                                const SizedBox(height: 16),
+                                if (type != DurationPickerType.numpad) label(),
                                 const SizedBox(height: 16),
                                 presetChips(width),
                               ],

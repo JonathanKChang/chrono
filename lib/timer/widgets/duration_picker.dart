@@ -80,9 +80,8 @@ Future<TimeDuration?> showDurationPicker(
                     ? Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (type != DurationPickerType.numpad)
-                            const SizedBox(height: 8),
-                          if (type != DurationPickerType.numpad) title(),
+                          const SizedBox(height: 16),
+                          title(),
                           const SizedBox(height: 16),
                           label(),
                           const SizedBox(height: 16),
@@ -96,9 +95,8 @@ Future<TimeDuration?> showDurationPicker(
                             // mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (type != DurationPickerType.numpad)
-                                const SizedBox(height: 16),
-                              if (type != DurationPickerType.numpad) title(),
+                              const SizedBox(height: 16),
+                              title(),
                               const SizedBox(height: 16),
                               label(),
                             ],
