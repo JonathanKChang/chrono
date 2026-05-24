@@ -40,8 +40,6 @@ class RingtonePlayer {
     await _play(ringtoneUri, vibrate: vibrate, loopMode: LoopMode.one);
   }
 
-
- 
   static Future<void> playAlarm(Alarm alarm,
       {LoopMode loopMode = LoopMode.one}) async {
     await activePlayer?.stop();
@@ -81,7 +79,6 @@ class RingtonePlayer {
 
   static Future<void> setVolume(double volume) async {
     logger.t("Setting volume to $volume");
-    _stopRisingVolume = true;
     await activePlayer?.setVolume(volume);
   }
 
@@ -95,8 +92,6 @@ class RingtonePlayer {
     // double duration = double.infinity,
   }) async {
     try {
-      _stopRisingVolume = false;
-
       RingtoneManager.lastPlayedRingtoneUri = ringtoneUri;
       if (_vibratorIsAvailable && vibrate) {
         Vibration.vibrate(pattern: [500, 1000], repeat: 0);
@@ -113,20 +108,15 @@ class RingtonePlayer {
         logger.t("Starting at random position: $randomNumber");
         activePlayer?.seek(duration * randomNumber);
       }
-      await setVolume(volume);
 
       // Gradually increase the volume
       if (secondsToMaxVolume > 0) {
-        for (int i = 0; i <= 10; i++) {
-          Future.delayed(
-            Duration(milliseconds: i * (secondsToMaxVolume * 100)),
-            () {
-              if (!_stopRisingVolume) {
-                setVolume((i / 10) * volume);
-              }
-            },
-          );
-        }
+        _scheduleVolumeIncrease(
+          maxVolume: volume,
+          secondsToMaxVolume: secondsToMaxVolume,
+        );
+      } else {
+        await setVolume(volume);
       }
       // Future.delayed(
       //   Duration(seconds: duration.toInt()),
@@ -157,6 +147,35 @@ class RingtonePlayer {
       await Vibration.cancel();
     }
     RingtoneManager.lastPlayedRingtoneUri = "";
+    _stopRisingVolume = true;
+  }
+
+  static void _scheduleVolumeIncrease({
+    required int secondsToMaxVolume,
+    required double maxVolume,
+  }) {
     _stopRisingVolume = false;
+
+    Future(() async {
+      final startTime = DateTime.now();
+
+      for (int i = 0; i <= 10; i++) {
+        if (_stopRisingVolume) {
+          return;
+        }
+
+        await setVolume((i / 10) * maxVolume);
+
+        final timeUntilNextIncrease = i * (secondsToMaxVolume * 100);
+        while (DateTime.now().difference(startTime).inMilliseconds <
+            timeUntilNextIncrease) {
+          await Future.delayed(const Duration(milliseconds: 10));
+
+          if (_stopRisingVolume) {
+            return;
+          }
+        }
+      }
+    });
   }
 }
