@@ -12,7 +12,9 @@ import 'package:clock_app/notifications/types/alarm_notification_arguments.dart'
 import 'package:clock_app/navigation/types/alignment.dart';
 import 'package:clock_app/notifications/widgets/notification_actions/slide_notification_action.dart';
 import 'package:clock_app/settings/data/settings_schema.dart';
+import 'package:clock_app/timer/widgets/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AlarmNotificationScreen extends StatefulWidget {
   const AlarmNotificationScreen({
@@ -100,6 +102,16 @@ class _AlarmNotificationScreenState extends State<AlarmNotificationScreen> {
         ScheduledNotificationType.alarm);
   }
 
+  void _customSnooze() async {
+    final duration = await showDurationPicker(context);
+    if (duration != null) {
+      _setNextWidget();
+      // Pass snoozeSeconds (total seconds, no rounding loss for sub-minute values).
+      dismissAlarmNotification(widget.scheduleId, AlarmDismissType.snooze,
+          ScheduledNotificationType.alarm, snoozeSeconds: duration.inSeconds);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -153,6 +165,22 @@ class _AlarmNotificationScreenState extends State<AlarmNotificationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _currentWidget,
+                      if (appSettings
+                              .getGroup("General")
+                              .getGroup("Interactions")
+                              .getSetting("Enable Custom Snooze")
+                              .value &&
+                          alarm.canBeSnoozed)
+                        TextButton(
+                          onPressed: _customSnooze,
+                          child: Text(
+                            AppLocalizations.of(context)!.customSnoozeButton,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
                     ],
                   ),
                 ),

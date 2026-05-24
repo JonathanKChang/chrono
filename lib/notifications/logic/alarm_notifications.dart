@@ -128,8 +128,10 @@ Future<void> closeAlarmNotification(ScheduledNotificationType type) async {
   logger.t("[closeAlarmNotification] Notification closed");
 }
 
-Future<void> snoozeAlarm(int scheduleId, ScheduledNotificationType type) async {
-  await stopAlarm(scheduleId, type, AlarmStopAction.snooze);
+Future<void> snoozeAlarm(int scheduleId, ScheduledNotificationType type,
+      {int? snoozeSeconds}) async {
+  await stopAlarm(scheduleId, type, AlarmStopAction.snooze,
+      snoozeSeconds: snoozeSeconds);
 }
 
 Future<void> dismissAlarm(
@@ -138,15 +140,18 @@ Future<void> dismissAlarm(
 }
 
 Future<void> stopAlarm(int scheduleId, ScheduledNotificationType type,
-    AlarmStopAction action) async {
+    AlarmStopAction action, {
+  int? snoozeSeconds, // Optional custom snooze duration in total seconds
+}) async {
   // Send a message to tell the alarm isolate to run the code to stop alarm
   // See stopScheduledNotification in lib/alarm/logic/alarm_isolate.dart
   IsolateNameServer.lookupPortByName(stopAlarmPortName)
-      ?.send([scheduleId, type.name, action.name]);
+      ?.send([scheduleId, type.name, action.name, snoozeSeconds]);
 }
 
 Future<void> dismissAlarmNotification(int scheduleId,
-    AlarmDismissType dismissType, ScheduledNotificationType type) async {
+    AlarmDismissType dismissType, ScheduledNotificationType type,
+    {int? snoozeSeconds}) async {
   logger.t("[dismissAlarmNotification]");
 
   switch (dismissType) {
@@ -159,7 +164,7 @@ Future<void> dismissAlarmNotification(int scheduleId,
       });
       break;
     case AlarmDismissType.snooze:
-      await snoozeAlarm(scheduleId, type);
+      await snoozeAlarm(scheduleId, type, snoozeSeconds: snoozeSeconds);
       break;
 
     case AlarmDismissType.unsnooze:

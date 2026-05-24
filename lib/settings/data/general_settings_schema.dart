@@ -241,6 +241,11 @@ SettingGroup generalSettingsSchema = SettingGroup(
           ),
         ],
       ),
+      SwitchSetting(
+        "Enable Custom Snooze",
+        (context) => AppLocalizations.of(context)!.enableCustomSnoozeSetting,
+        false,
+      ),
     ]),
     SettingPageLink(
       "Melodies",

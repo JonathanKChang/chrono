@@ -9,7 +9,9 @@ import 'package:clock_app/settings/data/settings_schema.dart';
 import 'package:clock_app/timer/types/time_duration.dart';
 import 'package:clock_app/timer/types/timer.dart';
 import 'package:clock_app/timer/utils/timer_id.dart';
+import 'package:clock_app/timer/widgets/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TimerNotificationScreen extends StatefulWidget {
   const TimerNotificationScreen({
@@ -44,6 +46,18 @@ class _TimerNotificationScreenState extends State<TimerNotificationScreen> {
   void _stop() {
     dismissAlarmNotification(widget.scheduleIds[0],
         AlarmDismissType.dismiss, ScheduledNotificationType.timer);
+  }
+
+  void _customSnooze() async {
+    final timer = getTimerById(widget.scheduleIds.first);
+    if (timer == null) return;
+    final duration = await showDurationPicker(context);
+    if (duration != null) {
+      // Pass snoozeSeconds (total seconds, no rounding loss for sub-minute values).
+      dismissAlarmNotification(widget.scheduleIds[0],
+          AlarmDismissType.snooze, ScheduledNotificationType.timer,
+          snoozeSeconds: duration.inSeconds);
+    }
   }
 
   @override
@@ -121,6 +135,21 @@ class _TimerNotificationScreenState extends State<TimerNotificationScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     actionWidget,
+                    if (appSettings
+                        .getGroup("General")
+                        .getGroup("Interactions")
+                        .getSetting("Enable Custom Snooze")
+                        .value)
+                      TextButton(
+                        onPressed: _customSnooze,
+                        child: Text(
+                          AppLocalizations.of(context)!.customSnoozeButton,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: Theme.of(context).colorScheme.primary),
+                        ),
+                      ),
                   ],
                 ),
               ),

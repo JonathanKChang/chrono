@@ -154,8 +154,8 @@ class ClockTimer extends CustomizableListItem {
     }
   }
 
-  Future<void> snooze() async {
-    TimeDuration addedDuration = TimeDuration(minutes: addLength.floor());
+  Future<void> snooze({TimeDuration? duration}) async {
+    final addedDuration = duration ?? TimeDuration(minutes: addLength.floor());
     _currentDuration = addedDuration;
     _milliSecondsRemainingOnPause = addedDuration.inSeconds * 1000;
     await start();
