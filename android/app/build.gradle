@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    // namespace "com.vicolo.chrono"
+    namespace "com.vicolo.chrono"
 
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
@@ -113,6 +113,10 @@ android {
         // This is for the Google Play Store, so we'll want the metadata.
         includeInBundle true
     }
+}
+
+dependencies {
+    implementation "androidx.cardview:cardview:1.0.0"
 }
 
 
