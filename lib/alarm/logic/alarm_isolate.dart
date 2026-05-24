@@ -251,14 +251,19 @@ void stopTimer(int scheduleId, AlarmStopAction action,
   ClockTimer? timer = getTimerById(scheduleId);
   if (timer == null) return;
   if (action == AlarmStopAction.snooze) {
-    updateTimerById(scheduleId, (timer) async {
-      if (snoozeSeconds != null) {
-        await timer.snooze(duration: TimeDuration(seconds: snoozeSeconds));
-      } else {
+    if (snoozeSeconds == 0) {
+      action = AlarmStopAction.dismiss;
+    } else if (snoozeSeconds == null) {
+      updateTimerById(scheduleId, (timer) async {
         await timer.snooze();
-      }
-    });
-  } else if (action == AlarmStopAction.dismiss) {
+      });
+    } else {
+      updateTimerById(scheduleId, (timer) async {
+        await timer.snooze(duration: TimeDuration(seconds: snoozeSeconds));
+      });
+    }
+  }
+  if (action == AlarmStopAction.dismiss) {
     // If there was an alarm already ringing when the timer was triggered, we
     // need to resume it now
     if (RingingManager.isAlarmRinging) {
