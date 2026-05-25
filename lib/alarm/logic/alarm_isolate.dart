@@ -234,11 +234,16 @@ void triggerTimer(int scheduleId, Json params) async {
   RingtonePlayer.playTimer(timer);
   RingingManager.ringTimer(scheduleId);
 
+  final anyHasRepeat = RingingManager.ringingTimerIds
+      .map(getTimerById)
+      .any((t) => t?.shouldRepeat == true);
+
   showAlarmNotification(
     type: ScheduledNotificationType.timer,
     scheduleIds: RingingManager.ringingTimerIds,
     snoozeActionLabel: '+${timer.addLength.floor()}:00',
-    dismissActionLabel: 'Stop',
+    dismissActionLabel:
+        "${anyHasRepeat ? "Restart" : "Stop"} ${RingingManager.ringingTimerIds.length > 1 ? "All" : ""}",
     title: "Time's Up!",
     body:
         "${RingingManager.ringingTimerIds.length} Timer${RingingManager.ringingTimerIds.length > 1 ? 's' : ''}",
