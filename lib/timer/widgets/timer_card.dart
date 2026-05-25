@@ -145,15 +145,6 @@ class _TimerCardState extends State<TimerCard> {
                   color: colorScheme.onSurface.withOpacity(0.4),
                 ),
               ),
-            if (widget.timer.shouldRepeat)
-              SizedBox(
-                width: 24,
-                child: Icon(
-                  Icons.repeat_rounded,
-                  size: 18,
-                  color: colorScheme.onSurface.withOpacity(0.4),
-                ),
-              ),
             const Spacer(),
             CardEditMenu(actions: [
               if (!widget.timer.isStopped)

@@ -54,8 +54,6 @@ class ClockTimer extends CustomizableListItem {
   double get addLength => _settings.getSetting("Add Length").value;
   bool get shouldDeleteAfterFinishing =>
       _settings.getSetting("Delete After Finishing").value;
-  bool get shouldRepeat =>
-      _settings.getSetting("Infinite Repeat").value;
   List<Tag> get tags => _settings.getSetting("Tags").value;
   TimeDuration get duration => _duration;
   TimeDuration get currentDuration => _currentDuration;
@@ -89,9 +87,7 @@ class ClockTimer extends CustomizableListItem {
         _currentDuration = TimeDuration.from(_duration),
         _milliSecondsRemainingOnPause = _duration.inSeconds * 1000,
         _startTime = DateTime(0),
-        _state = TimerState.stopped {
-    _ensureRepeatConsistency();
-  }
+        _state = TimerState.stopped;
 
   ClockTimer.from(ClockTimer timer)
       : _duration = timer._duration,
@@ -100,9 +96,7 @@ class ClockTimer extends CustomizableListItem {
         _startTime = DateTime(0),
         _state = TimerState.stopped,
         _settings = timer._settings.copy(),
-        _id = getId() {
-    _ensureRepeatConsistency();
-  }
+        _id = getId();
 
   void setSetting(BuildContext context, String name, dynamic value) {
     _settings.getSetting(name).setValue(context, value);
@@ -160,9 +154,8 @@ class ClockTimer extends CustomizableListItem {
     }
   }
 
-  Future<void> snooze({TimeDuration? duration, bool onRepeat = false}) async {
-    final addedDuration = duration ??
-        (onRepeat ? TimeDuration.from(_duration) : TimeDuration(minutes: addLength.floor()));
+  Future<void> snooze({TimeDuration? duration}) async {
+    final addedDuration = duration ?? TimeDuration(minutes: addLength.floor());
     _currentDuration = addedDuration;
     _milliSecondsRemainingOnPause = addedDuration.inSeconds * 1000;
     await start();
@@ -254,15 +247,6 @@ class ClockTimer extends CustomizableListItem {
           .settingItems,
     );
     _settings.loadValueFromJson(json['settings']);
-    _ensureRepeatConsistency();
-  }
-
-  void _ensureRepeatConsistency() {
-    if (_settings.getSetting("Infinite Repeat").value) {
-      _settings.getSetting("Delete After Finishing")
-          .setValueWithoutNotify(false);
-      _settings.getSetting("Add Length").setValueWithoutNotify(1);
-    }
   }
 
   @override
@@ -274,7 +258,6 @@ class ClockTimer extends CustomizableListItem {
     _state = other._state;
     _settings = other._settings.copy();
     _id = other._id;
-    _ensureRepeatConsistency();
   }
 
   @override

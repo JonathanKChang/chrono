@@ -27,15 +27,6 @@ class TimerNotificationScreen extends StatefulWidget {
 }
 
 class _TimerNotificationScreenState extends State<TimerNotificationScreen> {
-  bool get _anyHasRepeat {
-    return widget.scheduleIds
-        .map(getTimerById)
-        .any((t) => t?.shouldRepeat == true);
-  }
-
-  String get _stopLabel =>
-      "${_anyHasRepeat ? "Restart" : "Stop"} ${widget.scheduleIds.length > 1 ? "All" : ""}";
-
   late Widget actionWidget = appSettings
       .getGroup("Timer")
       .getSetting("Dismiss Action Type")
@@ -43,7 +34,7 @@ class _TimerNotificationScreenState extends State<TimerNotificationScreen> {
       .builder(
         _stop,
         _addTime,
-        _stopLabel,
+        "Stop ${widget.scheduleIds.length > 1 ? "All" : ""}",
         '+${getTimerById(widget.scheduleIds.last)?.addLength.floor()}:00',
       );
 
@@ -79,14 +70,14 @@ class _TimerNotificationScreenState extends State<TimerNotificationScreen> {
           .builder(
             _stop,
             _addTime,
-            _stopLabel,
+            "Stop ${widget.scheduleIds.length > 1 ? "All" : ""}",
             '+${getTimerById(widget.scheduleIds.last)?.addLength.floor()}:00',
           );
     } catch (e) {
       actionWidget = SlideNotificationAction(
         onDismiss: _stop,
         onSnooze: _addTime,
-        dismissLabel: _stopLabel,
+        dismissLabel: "Stop ${widget.scheduleIds.length > 1 ? "All" : ""}",
         snoozeLabel:
             '+${getTimerById(widget.scheduleIds.last)?.addLength.floor()}:00',
       );
