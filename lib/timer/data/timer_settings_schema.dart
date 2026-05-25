@@ -101,10 +101,7 @@ SettingGroup timerSettingsSchema = SettingGroup(
         (context) => AppLocalizations.of(context)!.timerInfiniteRepeatSetting, false),
     SliderSetting("Add Length",
         (context) => AppLocalizations.of(context)!.addLengthSetting, 1, 30, 1,
-        unit: "minutes", snapLength: 1,
-        enableConditions: [
-          ValueCondition(["Infinite Repeat"], (value) => value == false)
-        ]),
+        unit: "minutes", snapLength: 1),
     DynamicMultiSelectSetting<Tag>(
       "Tags",
       (context) => AppLocalizations.of(context)!.tagsSetting,
