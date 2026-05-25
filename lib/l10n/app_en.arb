@@ -303,6 +303,8 @@
   "@vibrationSetting": {},
   "timerDeleteAfterFinishingSetting": "Delete After Finishing",
   "@timerDeleteAfterFinishingSetting": {},
+  "timerInfiniteRepeatSetting": "Infinite Repeat",
+  "@timerInfiniteRepeatSetting": {},
   "audioChannelSetting": "Audio Channel",
   "@audioChannelSetting": {},
   "audioChannelAlarm": "Alarm",

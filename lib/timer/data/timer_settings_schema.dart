@@ -94,6 +94,8 @@ SettingGroup timerSettingsSchema = SettingGroup(
     ),
     SwitchSetting("Delete After Finishing",
         (context) => AppLocalizations.of(context)!.timerDeleteAfterFinishingSetting, false),
+    SwitchSetting("Infinite Repeat",
+        (context) => AppLocalizations.of(context)!.timerInfiniteRepeatSetting, false),
     SliderSetting("Add Length",
         (context) => AppLocalizations.of(context)!.addLengthSetting, 1, 30, 1,
         unit: "minutes", snapLength: 1),

@@ -54,6 +54,8 @@ class ClockTimer extends CustomizableListItem {
   double get addLength => _settings.getSetting("Add Length").value;
   bool get shouldDeleteAfterFinishing =>
       _settings.getSetting("Delete After Finishing").value;
+  bool get shouldRepeat =>
+      _settings.getSetting("Infinite Repeat").value;
   List<Tag> get tags => _settings.getSetting("Tags").value;
   TimeDuration get duration => _duration;
   TimeDuration get currentDuration => _currentDuration;
