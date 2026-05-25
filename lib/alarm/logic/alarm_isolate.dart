@@ -264,6 +264,12 @@ void stopTimer(int scheduleId, AlarmStopAction action,
     }
   }
   if (action == AlarmStopAction.dismiss) {
+    // Repeat: reset and restart instead of stopping
+    if (timer.shouldRepeat) {
+      updateTimerById(scheduleId, (timer) async =>
+          await timer.snooze(onRepeat: true));
+      return;
+    }
     // If there was an alarm already ringing when the timer was triggered, we
     // need to resume it now
     if (RingingManager.isAlarmRinging) {
