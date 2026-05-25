@@ -271,6 +271,7 @@ void stopTimer(int scheduleId, AlarmStopAction action,
   if (action == AlarmStopAction.dismiss) {
     // Repeat: reset and restart instead of stopping
     if (timer.shouldRepeat) {
+      RingingManager.stopAllTimers();
       updateTimerById(scheduleId, (timer) async =>
           await timer.snooze(onRepeat: true));
       return;
