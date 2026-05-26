@@ -5,8 +5,6 @@ import 'package:clock_app/alarm/types/schedules/weekly_alarm_schedule.dart';
 import 'package:clock_app/common/types/notification_type.dart';
 import 'package:clock_app/common/utils/list_storage.dart';
 import 'package:clock_app/developer/logic/logger.dart';
-import 'package:clock_app/navigation/types/app_visibility.dart';
-import 'package:clock_app/notifications/logic/alarm_notifications.dart';
 import 'package:clock_app/settings/types/listener_manager.dart';
 import 'package:flutter/material.dart' hide Intent;
 import 'package:receive_intent/receive_intent.dart';
@@ -93,7 +91,6 @@ void handleIntent(Intent? receivedIntent, BuildContext context,
       case "android.intent.action.VIEW_TIMERS":
         break;
       case "SELECT_NOTIFICATION":
-        appVisibilityWhenAlarmNotificationCreated = AppVisibility.state;
         break;
       default:
         break;
