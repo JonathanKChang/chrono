@@ -92,8 +92,16 @@ SettingGroup timerSettingsSchema = SettingGroup(
         "Vibration",
       ],
     ),
+    SwitchSetting("Repeat",
+        (context) => AppLocalizations.of(context)!.timerRepeatSetting, false,
+        enableConditions: [
+          ValueCondition(["Delete After Finishing"], (value) => value == false)
+        ]),
     SwitchSetting("Delete After Finishing",
-        (context) => AppLocalizations.of(context)!.timerDeleteAfterFinishingSetting, false),
+        (context) => AppLocalizations.of(context)!.timerDeleteAfterFinishingSetting, false,
+        enableConditions: [
+          ValueCondition(["Repeat"], (value) => value == false)
+        ]),
     SliderSetting("Add Length",
         (context) => AppLocalizations.of(context)!.addLengthSetting, 1, 30, 1,
         unit: "minutes", snapLength: 1),
