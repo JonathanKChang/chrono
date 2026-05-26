@@ -197,16 +197,12 @@ void stopAlarm(int scheduleId, AlarmStopAction action,
     }
     // await createSnoozeNotification(scheduleId);
   } else if (action == AlarmStopAction.dismiss) {
-    // If there was a timer ringing when the alarm was triggered, resume it now
-    if (RingingManager.isTimerRinging) {
-      ClockTimer? timer = getTimerById(RingingManager.activeTimerId);
-      if (timer != null) {
-        RingtonePlayer.playTimer(timer);
-      }
-    }
+    // Stop all audio — alarm dismiss stops everything (alarms + timers)
+    RingtonePlayer.stop();
     await updateAlarmById(scheduleId, (alarm) async => alarm.handleDismiss());
   }
   RingingManager.stopAlarm();
+  RingingManager.stopAllTimers();
 }
 
 void triggerTimer(int scheduleId, Json params) async {
@@ -269,6 +265,8 @@ void stopTimer(int scheduleId, AlarmStopAction action,
     }
   }
   if (action == AlarmStopAction.dismiss) {
+    // Stop all audio — timer dismiss stops everything (alarms + timers)
+    RingtonePlayer.stop();
     // Repeat: reset and restart instead of stopping
     if (timer.shouldRepeat) {
       RingingManager.stopAllTimers();
@@ -276,8 +274,8 @@ void stopTimer(int scheduleId, AlarmStopAction action,
           await timer.snooze(onRepeat: true));
       return;
     }
-    // If there was an alarm already ringing when the timer was triggered, we
-    // need to resume it now
+    // If there was an alarm already ringing when the timer was triggered,
+    // play just that alarm's ringtone (all other sounds are already stopped)
     if (RingingManager.isAlarmRinging) {
       Alarm? alarm = getAlarmById(RingingManager.ringingAlarmId);
       if (alarm != null) {
