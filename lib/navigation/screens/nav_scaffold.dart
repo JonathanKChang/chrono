@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:clock_app/navigation/types/app_visibility.dart';
+
 import 'package:clock_app/alarm/logic/new_alarm_snackbar.dart';
 import 'package:clock_app/alarm/types/alarm.dart';
 import 'package:clock_app/common/utils/snackbar.dart';
@@ -171,6 +173,12 @@ class _NavScaffoldState extends State<NavScaffold> {
     super.initState();
     initializeQuickActions(context, _onTabSelected);
     initReceiveIntent();
+
+    // After the first frame renders, check if a ringing notification needs to
+    // be displayed. This covers cold starts where FGBGEvents may not fire.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkAndShowNotificationScreen();
+    });
 
     swipeActionSetting =
         appSettings.getGroup("General").getSetting("Swipe Action");
