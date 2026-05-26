@@ -48,12 +48,15 @@ void main() async {
 
   await updateAlarms("Update Alarms on Start");
   await updateTimers("Update Timers on Start");
-  AppVisibility.initialize();
   initForegroundTask();
   initBackgroundService();
   initializeIsolatePorts();
 
   runApp(const App());
+
+  // Initialize foreground detection after the widget tree is built so that
+  // navigator and routes are ready when lifecycle events fire.
+  initializeAppVisibility();
 
   registerHeadlessBackgroundService();
 }
