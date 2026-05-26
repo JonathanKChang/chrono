@@ -12,6 +12,7 @@ import 'package:clock_app/notifications/data/action_keys.dart';
 import 'package:clock_app/notifications/data/fullscreen_notification_data.dart';
 import 'package:clock_app/notifications/data/notification_channel.dart';
 import 'package:clock_app/alarm/logic/schedule_alarm.dart';
+import 'package:clock_app/navigation/types/app_visibility.dart';
 import 'package:clock_app/navigation/types/routes.dart';
 import 'package:clock_app/notifications/types/alarm_notification_arguments.dart';
 import 'package:clock_app/notifications/types/fullscreen_notification_data.dart';
@@ -98,6 +99,9 @@ Future<void> removeAlarmNotification(ScheduledNotificationType type) async {
 
 Future<void> closeAlarmNotification(ScheduledNotificationType type) async {
   logger.t("[closeAlarmNotification]");
+  // Clear the ringing state so foreground detection won't re-push the screen.
+  clearRingingNotification(type);
+
   final intent = await ReceiveIntent.getInitialIntent();
 
   await removeAlarmNotification(type);

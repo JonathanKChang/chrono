@@ -1,8 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:clock_app/common/types/notification_type.dart';
 import 'package:clock_app/notifications/data/notification_channel.dart';
 import 'package:clock_app/notifications/logic/alarm_notifications.dart';
 import 'package:clock_app/notifications/types/alarm_notification_arguments.dart';
 import 'package:clock_app/notifications/types/fullscreen_notification_data.dart';
+import 'package:clock_app/navigation/types/app_visibility.dart';
 import 'package:clock_app/stopwatch/logic/update_stopwatch.dart';
 import 'package:clock_app/system/logic/initialize_isolate.dart';
 import 'package:clock_app/timer/logic/update_timers.dart';
@@ -16,9 +18,43 @@ Future<void> onNotificationCreatedMethod(
   switch (receivedNotification.channelKey) {
     case alarmNotificationChannelKey:
       Payload payload = receivedNotification.payload!;
-      int? scheduleId = int.tryParse(payload['scheduleId']);
-      if (scheduleId == null) return;
-      // AlarmNotificationManager.handleNotificationCreated(receivedNotification);
+      if (payload.containsKey('scheduleIds')) {
+        try {
+          final raw = payload['scheduleIds'] as String;
+          final ids = raw
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(',')
+              .map((s) => int.tryParse(s.trim()))
+              .whereType<int>()
+              .toList();
+          if (ids.isNotEmpty) {
+            final type = payload['type'] != null
+                ? ScheduledNotificationType.values
+                    .byName(payload['type'] as String)
+                : ScheduledNotificationType.alarm;
+            setRingingNotification(type, ids);
+          }
+        } catch (_) {}
+      }
+      break;
+    case timerNotificationChannelKey:
+      Payload payload = receivedNotification.payload!;
+      if (payload.containsKey('scheduleIds')) {
+        try {
+          final raw = payload['scheduleIds'] as String;
+          final ids = raw
+              .replaceAll('[', '')
+              .replaceAll(']', '')
+              .split(',')
+              .map((s) => int.tryParse(s.trim()))
+              .whereType<int>()
+              .toList();
+          if (ids.isNotEmpty) {
+            setRingingNotification(ScheduledNotificationType.timer, ids);
+          }
+        } catch (_) {}
+      }
       break;
   }
 }
@@ -36,6 +72,14 @@ Future<void> onDismissActionReceivedMethod(
 
   switch (receivedAction.channelKey) {
     case alarmNotificationChannelKey:
+      Payload payload = receivedAction.payload!;
+      if (payload.containsKey('type')) {
+        try {
+          final type = ScheduledNotificationType
+              .values.byName(payload['type'] as String);
+          clearRingingNotification(type);
+        } catch (_) {}
+      }
       await handleAlarmNotificationDismiss(
           receivedAction, AlarmDismissType.dismiss);
       break;
