@@ -257,10 +257,8 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                         Expanded(
                           flex: 1,
                           child: CardContainer(
-                            alignment: Alignment.bottomCenter,
+                            alignment: Alignment.center,
                             color: colorScheme.surface,
-                            elevationMultiplier: 0,
-                            showShadow: false,
                             child: SizedBox.expand(
                               child: Flex(
                                 direction: orientation == Orientation.portrait
