@@ -279,7 +279,11 @@ class _TimerScreenState extends State<TimerScreen> {
   }
 
   Future<void> _handleCustomSnooze(ClockTimer timer, TimeDuration duration) async {
-    await timer.snooze(duration: duration);
+    if (timer.isPaused) {
+      timer.setTime(duration);
+    } else {
+      await timer.snooze(duration: duration);
+    }
     _listController.changeItems((timers) {});
     _updateTimerNotification();
   }

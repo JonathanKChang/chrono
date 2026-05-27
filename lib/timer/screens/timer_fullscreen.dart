@@ -280,7 +280,7 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                                         },
                                         child: Text(
                                           AppLocalizations.of(context)!
-                                              .customSnoozeButton,
+                                              .oneTimeSetButton,
                                           style: TextStyle(
                                               color: colorScheme.primary),
                                         ),
