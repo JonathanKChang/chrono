@@ -539,6 +539,10 @@
   "@enableCustomSnoozeSetting": {},
   "customSnoozeButton": "Custom Snooze...",
   "@customSnoozeButton": {},
+  "oneTimeSetButton": "One-time Set...",
+  "@oneTimeSetButton": {
+    "description": "Button to set a one-time temporary duration override for a paused timer"
+  },
   "showUpcomingAlarmNotificationSetting": "Show Upcoming Alarm Notifications",
   "@showUpcomingAlarmNotificationSetting": {},
   "upcomingLeadTimeSetting": "Upcoming Lead Time",

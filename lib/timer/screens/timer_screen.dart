@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:clock_app/common/widgets/fab.dart';
 import 'package:clock_app/common/widgets/list/persistent_list_view.dart';
+import 'package:clock_app/timer/types/time_duration.dart';
 import 'package:clock_app/timer/types/timer.dart';
 import 'package:clock_app/timer/widgets/timer_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -277,6 +278,16 @@ class _TimerScreenState extends State<TimerScreen> {
     // showProgressNotification();
   }
 
+  Future<void> _handleCustomSnooze(ClockTimer timer, TimeDuration duration) async {
+    if (timer.isPaused) {
+      timer.setTime(duration);
+    } else {
+      await timer.snooze(duration: duration);
+    }
+    _listController.changeItems((timers) {});
+    _updateTimerNotification();
+  }
+
   Future<void> _handleAddTimeToTimer(ClockTimer timer) async {
     await timer.addTime();
     _listController.changeItems((timers) {});
@@ -397,6 +408,7 @@ class _TimerScreenState extends State<TimerScreen> {
                       onToggleState: _handleToggleState,
                       onAddTime: _handleAddTimeToTimer,
                       onCustomize: _handleCustomizeTimer,
+                      onCustomSnooze: _handleCustomSnooze,
                     ),
                   ),
                 );
