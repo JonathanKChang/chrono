@@ -16,6 +16,7 @@ class _RingingState {
 
 StreamSubscription<FGBGType>? _fgbgSubscription;
 Timer? _foregroundDebounce;
+bool _isForeground = false;
 
 /// Called from notification callbacks when an alarm/timer notification is created.
 /// Stores schedule IDs so foreground detection code can find them later.
@@ -24,6 +25,12 @@ void setRingingNotification(ScheduledNotificationType type, List<int> ids) {
     _RingingState.alarmScheduleIds = ids;
   } else {
     _RingingState.timerScheduleIds = ids;
+  }
+
+  // If the app is already in the foreground, push the notification screen
+  // immediately instead of waiting for an FGBG transition event.
+  if (_isForeground) {
+    checkAndShowNotificationScreen();
   }
 }
 
@@ -45,7 +52,8 @@ Future<void> initializeAppVisibility() async {
   // }
 
   _fgbgSubscription = FGBGEvents.stream.listen((event) {
-    if (event == FGBGType.foreground) {
+    _isForeground = event == FGBGType.foreground;
+    if (_isForeground) {
       // Debounce foreground events to avoid duplicate pushes when the app
       // is launched from a notification.
       _foregroundDebounce?.cancel();
