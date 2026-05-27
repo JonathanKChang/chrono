@@ -53,7 +53,9 @@ class ClockTimer extends CustomizableListItem {
           : TimeDuration.zero;
   double get addLength => _settings.getSetting("Add Length").value;
   bool get shouldDeleteAfterFinishing =>
-      _settings.getSetting("Delete After Finishing").value;
+      !shouldRepeat && _settings.getSetting("Delete After Finishing").value;
+  bool get shouldRepeat =>
+      _settings.getSetting("Repeat").value;
   List<Tag> get tags => _settings.getSetting("Tags").value;
   TimeDuration get duration => _duration;
   TimeDuration get currentDuration => _currentDuration;
@@ -154,8 +156,9 @@ class ClockTimer extends CustomizableListItem {
     }
   }
 
-  Future<void> snooze({TimeDuration? duration}) async {
-    final addedDuration = duration ?? TimeDuration(minutes: addLength.floor());
+  Future<void> snooze({TimeDuration? duration, bool onRepeat = false}) async {
+    final addedDuration = duration ??
+        (onRepeat ? TimeDuration.from(_duration) : TimeDuration(minutes: addLength.floor()));
     _currentDuration = addedDuration;
     _milliSecondsRemainingOnPause = addedDuration.inSeconds * 1000;
     await start();
@@ -247,6 +250,10 @@ class ClockTimer extends CustomizableListItem {
           .settingItems,
     );
     _settings.loadValueFromJson(json['settings']);
+    if (shouldRepeat) {
+      _settings.getSetting("Delete After Finishing")
+          .setValueWithoutNotify(false);
+    }
   }
 
   @override
