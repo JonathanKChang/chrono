@@ -25,6 +25,11 @@ void setRingingNotification(ScheduledNotificationType type, List<int> ids) {
   } else {
     _RingingState.timerScheduleIds = ids;
   }
+
+  // Push the notification screen regardless of foreground state — this is safe:
+  // if the app is backgrounded, App.navigatorKey.currentState will be null.
+  // if already on a notification screen, _pushScreen returns early.
+  checkAndShowNotificationScreen();
 }
 
 /// Clear ringing state when notification is dismissed.

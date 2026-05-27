@@ -99,8 +99,9 @@ Future<void> removeAlarmNotification(ScheduledNotificationType type) async {
 
 Future<void> closeAlarmNotification(ScheduledNotificationType type) async {
   logger.t("[closeAlarmNotification]");
-  // Clear the ringing state so foreground detection won't re-push the screen.
-  clearRingingNotification(type);
+  // Stop all ringing alarms AND timers — any dismiss should silence everything
+  clearRingingNotification(ScheduledNotificationType.alarm);
+  clearRingingNotification(ScheduledNotificationType.timer);
 
   final intent = await ReceiveIntent.getInitialIntent();
 
