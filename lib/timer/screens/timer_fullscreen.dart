@@ -257,7 +257,7 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                         Expanded(
                           flex: 1,
                           child: CardContainer(
-                            alignment: Alignment.center,
+                            alignment: Alignment.bottomCenter,
                             color: colorScheme.surface,
                             elevationMultiplier: 0,
                             showShadow: false,
