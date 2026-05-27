@@ -7,6 +7,7 @@ import 'package:clock_app/settings/types/listener_manager.dart';
 import 'package:clock_app/timer/types/time_duration.dart';
 import 'package:clock_app/timer/types/timer.dart';
 import 'package:clock_app/timer/utils/timer_id.dart';
+import 'package:clock_app/timer/widgets/duration_picker.dart';
 import 'package:clock_app/timer/widgets/timer_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,6 +20,7 @@ class TimerFullscreen extends StatefulWidget {
     required this.onReset,
     required this.onAddTime,
     required this.onCustomize,
+    required this.onCustomSnooze,
   });
 
   final ClockTimer timer;
@@ -26,6 +28,7 @@ class TimerFullscreen extends StatefulWidget {
   final Future<void> Function(ClockTimer) onReset;
   final Future<void> Function(ClockTimer) onAddTime;
   final Future<ClockTimer?> Function(ClockTimer) onCustomize;
+  final Future<void> Function(ClockTimer, TimeDuration) onCustomSnooze;
 
   @override
   State<TimerFullscreen> createState() => _TimerFullscreenState();
@@ -250,6 +253,45 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                           },
                         ),
                       ),
+                      if (timer.state != TimerState.stopped)
+                        Expanded(
+                          flex: 1,
+                          child: CardContainer(
+                            alignment: Alignment.center,
+                            child: SizedBox.expand(
+                              child: Flex(
+                                direction: orientation == Orientation.portrait
+                                    ? Axis.vertical
+                                    : Axis.horizontal,
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: TextButton(
+                                        onPressed: () async {
+                                          final duration =
+                                              await showDurationPicker(context);
+                                          if (duration != null) {
+                                            await widget.onCustomSnooze(
+                                                timer, duration);
+                                            updateTimer();
+                                          }
+                                        },
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .customSnoozeButton,
+                                          style: TextStyle(
+                                              color: colorScheme.primary),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
