@@ -258,6 +258,9 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                           flex: 1,
                           child: CardContainer(
                             alignment: Alignment.center,
+                            color: colorScheme.surface,
+                            elevationMultiplier: 0,
+                            showShadow: false,
                             child: SizedBox.expand(
                               child: Flex(
                                 direction: orientation == Orientation.portrait
@@ -278,11 +281,16 @@ class _TimerFullscreenState extends State<TimerFullscreen> {
                                             updateTimer();
                                           }
                                         },
+                                        style: TextButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                        ),
                                         child: Text(
                                           AppLocalizations.of(context)!
                                               .oneTimeSetButton,
                                           style: TextStyle(
-                                              color: colorScheme.primary),
+                                              color: colorScheme.primary
+                                                  .withOpacity(0.7),
+                                              fontSize: 12),
                                         ),
                                       ),
                                     ),
