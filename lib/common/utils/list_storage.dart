@@ -56,7 +56,12 @@ List<T> loadListSync<T extends JsonSerializable>(String key) {
 }
 
 Future<List<T>> loadList<T extends JsonSerializable>(String key) async {
-  return listFromString<T>(await loadTextFile(key));
+  try {
+    return listFromString<T>(await loadTextFile(key));
+  } catch (e) {
+    logger.e("Error loading list ($key): $e");
+    return [];
+  }
 }
 
 Future<void> saveList<T extends JsonSerializable>(
