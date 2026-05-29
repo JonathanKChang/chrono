@@ -88,10 +88,9 @@ Future<void> saveTextFile(String key, String content) async {
   await queue.add(() async {
     String appDataDirectory = getAppDataDirectoryPathSync();
     File file = File(path.join(appDataDirectory, '$key.txt'));
-    if (!file.existsSync()) {
-      file.createSync();
-    }
-    await file.writeAsString(content, mode: FileMode.writeOnly);
+    File tempFile = File('${file.path}.tmp');
+    await tempFile.writeAsString(content, mode: FileMode.writeOnly);
+    await tempFile.rename(file.path);
   });
 }
 
@@ -100,13 +99,11 @@ Future<String> saveRingtone(String id, Uint8List data) async {
   String newPath = path.join(ringtonesDirectory, id);
 
   File file = File(newPath);
+  File tempFile = File('${file.path}.tmp');
 
   await queue.add(() async {
-    if (!file.existsSync()) {
-      file.createSync(recursive: true);
-    }
-
-    await file.writeAsBytes(data, mode: FileMode.writeOnly);
+    await tempFile.writeAsBytes(data, mode: FileMode.writeOnly);
+    await tempFile.rename(file.path);
   });
 
   return newPath;
