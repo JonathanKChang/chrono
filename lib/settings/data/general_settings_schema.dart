@@ -281,7 +281,7 @@ SettingGroup generalSettingsSchema = SettingGroup(
           "useBackgroundService",
           (context) =>
               AppLocalizations.of(context)!.useBackgroundServiceSetting,
-          false,
+          true,
           getDescription: (context) => AppLocalizations.of(context)!
               .useBackgroundServiceSettingDescription,
           onChange: (context, value) {
@@ -295,7 +295,7 @@ SettingGroup generalSettingsSchema = SettingGroup(
                 AppLocalizations.of(context)!.backgroundServiceIntervalSetting,
             15,
             300,
-            60,
+            15,
             unit: "m",
             snapLength: 15,
             getDescription: (context) => AppLocalizations.of(context)!
