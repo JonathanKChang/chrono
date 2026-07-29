@@ -11,12 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_boot_receiver: ^1.3.0
   flutter_localizations:
     sdk: flutter
   intl: any
-  # flutter_boot_receiver:
-  #   path: "../flutter_boot_receiver"
   timezone: ^0.9.1
   timer_builder: ^2.0.0
   path_provider: ^2.0.11
