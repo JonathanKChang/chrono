@@ -13,7 +13,6 @@ import 'package:clock_app/settings/logic/initialize_settings.dart';
 import 'package:clock_app/system/data/app_info.dart';
 import 'package:clock_app/system/data/device_info.dart';
 import 'package:clock_app/system/logic/background_service.dart';
-import 'package:clock_app/system/logic/handle_boot.dart';
 import 'package:clock_app/system/logic/initialize_isolate_ports.dart';
 import 'package:clock_app/timer/logic/update_timers.dart';
 import 'package:flutter/material.dart';
