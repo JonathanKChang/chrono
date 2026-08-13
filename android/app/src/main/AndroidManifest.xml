@@ -133,5 +133,9 @@
       <meta-data android:name="android.appwidget.provider"
         android:resource="@xml/digital_clock_widget" />
       </receiver>
+
+    <!-- Suppress flutter_foreground_task boot receivers — not needed for alarm reliability -->
+    <receiver android:name="com.pravera.flutter_foreground_task.service.RebootReceiver" tools:node="remove" />
+    <receiver android:name="com.pravera.flutter_foreground_task.service.RestartReceiver" tools:node="remove" />
   </application>
 </manifest>
