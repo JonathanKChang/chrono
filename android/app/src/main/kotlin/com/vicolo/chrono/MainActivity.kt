@@ -2,6 +2,7 @@ package com.vicolo.chrono
 
 import android.content.Context
 import android.content.Intent
+import android.view.WindowManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -16,8 +17,23 @@ import io.flutter.plugins.GeneratedPluginRegistrant;
 
 class MainActivity: FlutterActivity() {
     private val CHANNEL = "com.vicolo.chrono/alarm"
+    private val WAKELOCK_CHANNEL = "com.vicolo.chrono/wakelock"
     
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        
+        MethodChannel(flutterEngine.dartExecutor, WAKELOCK_CHANNEL).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "turnOn" -> {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    result.success(null)
+                }
+                "turnOff" -> {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
     }
 }
