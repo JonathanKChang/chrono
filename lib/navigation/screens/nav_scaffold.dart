@@ -6,6 +6,7 @@ import 'package:clock_app/navigation/types/app_visibility.dart';
 import 'package:clock_app/alarm/logic/new_alarm_snackbar.dart';
 import 'package:clock_app/alarm/types/alarm.dart';
 import 'package:clock_app/common/utils/snackbar.dart';
+import 'package:clock_app/common/utils/wakelock.dart';
 import 'package:clock_app/common/widgets/card_container.dart';
 import 'package:clock_app/icons/flux_icons.dart';
 import 'package:clock_app/navigation/data/tabs.dart';
@@ -68,7 +69,8 @@ class NavScaffold extends StatefulWidget {
   State<NavScaffold> createState() => _NavScaffoldState();
 }
 
-class _NavScaffoldState extends State<NavScaffold> {
+class _NavScaffoldState extends State<NavScaffold>
+    with WidgetsBindingObserver {
   late int _selectedTabIndex;
   late Setting swipeActionSetting;
   late Setting showForegroundSetting;
@@ -96,6 +98,21 @@ class _NavScaffoldState extends State<NavScaffold> {
     setState(() {
       _selectedTabIndex = currentPageIndex;
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final keepOn = appSettings
+          .getGroup("General")
+          .getSetting("Keep Screen On")
+          .value;
+      if (keepOn) {
+        Wakelock.enable();
+      }
+    } else if (state == AppLifecycleState.paused) {
+      Wakelock.disable();
+    }
   }
 
   void _uupdate(dynamic value) {
@@ -191,6 +208,19 @@ class _NavScaffoldState extends State<NavScaffold> {
     _controller = PageController(initialPage: widget.initialTabIndex);
     _selectedTabIndex = widget.initialTabIndex;
 
+    WidgetsBinding.instance.addObserver(this);
+
+    // Check initial foreground state
+    if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
+      final keepOn = appSettings
+          .getGroup("General")
+          .getSetting("Keep Screen On")
+          .value;
+      if (keepOn) {
+        Wakelock.enable();
+      }
+    }
+
     _updateForegroundNotification(showForegroundSetting.value);
   }
 
@@ -200,6 +230,7 @@ class _NavScaffoldState extends State<NavScaffold> {
     showForegroundSetting.removeListener(_updateForegroundNotification);
     _sub.cancel();
     _controller.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -209,6 +209,10 @@ SettingGroup generalSettingsSchema = SettingGroup(
               "input",
               "spinner",
             ]),
+        SwitchSetting(
+            "Keep Screen On",
+            (context) => AppLocalizations.of(context)!.keepScreenOnSetting,
+            false),
       ],
     ),
     SettingGroup("Interactions",

@@ -790,5 +790,7 @@
   "app": "App",
   "materialYou": "Material You",
   "timerRepeatSetting": "Repeat",
-  "@timerRepeatSetting": {}
+  "@timerRepeatSetting": {},
+  "keepScreenOnSetting": "Keep Screen On",
+  "@keepScreenOnSetting": {}
 }
